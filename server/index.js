@@ -3,11 +3,18 @@ import mongoose from 'mongoose';
 import userRoutes from './routes/user.js';
 import blogRoutes from './routes/blog.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 
-// MongoDB connection
-mongoose.connect('mongodb+srv://santhosh:santhosh123@cluster0.y5n7h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+// MongoDB connection using the environment variable
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
     .then(() => {
         console.log('MongoDB connection successful');
     })
@@ -18,25 +25,29 @@ mongoose.connect('mongodb+srv://santhosh:santhosh123@cluster0.y5n7h.mongodb.net/
 // Middlewares
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// CORS setup (Allow requests from localhost:3000)
 app.use(cors({
-    origin: 'http://localhost:3000' // Allow requests from your React frontend
+    origin: 'http://localhost:3000' // Hard-coded to allow requests from your React frontend or change it accordingly
 }));
 
 // Routes
 app.use('/user', userRoutes);
 app.use('/blog', blogRoutes);
 
-// Error Handling Middleware
+// Error Handling Middleware for undefined routes
 app.use((req, res, next) => {
     res.status(404).send('API not found');
 });
 
+// General error handling
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).send('Something went wrong');
 });
 
 // Server
-app.listen(8000, () => {
-    console.log("Server running on port 8000");
+const PORT =  8000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

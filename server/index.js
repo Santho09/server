@@ -34,7 +34,7 @@ app.get('/api/healthcheck', (req, res) => {
 
 // CORS setup (Allow requests from localhost:3000)
 app.use(cors({
-    origin: 'client-pied-pi.vercel.app',
+    origin: 'https://client-pied-pi.vercel.app',
     methods: ['GET', 'POST','DELETE'], // Specify allowed methods as needed
     credentials: true // Hard-coded to allow requests from your React frontend or change it accordingly
 }));
